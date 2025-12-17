@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+EMAIL="hayde"
+KEY_NAME="github"
+
+SSH_DIR="$HOME/.ssh"
+KEY_PATH="$SSH_DIR/id_ed25519_$KEY_NAME"
+SSH_CONFIG="$SSH_DIR/config"
+
+mkdir -p "$SSH_DIR"
+chmod 700 "$SSH_DIR"
+
+# Generate key if it doesn't already exist
+if [ -f "$KEY_PATH" ]; then
+  echo "SSH key already exists at $KEY_PATH"
+else
+  ssh-keygen -t ed25519 -C "$EMAIL" -f "$KEY_PATH"
+fi
+
+# Start ssh-agent if not running
+if ! ssh-add -l >/dev/null 2>&1; then
+  eval "$(ssh-agent -s)"
+fi
+
+# Add key to agent
+ssh-add "$KEY_PATH"
+
+# ---- THIS IS THE IMPORTANT FIX ----
+# Ensure SSH uses this key for GitHub
+if [ ! -f "$SSH_CONFIG" ] || ! grep -q "Host github.com" "$SSH_CONFIG"; then
+  cat << EOF >> "$SSH_CONFIG"
+
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile $KEY_PATH
+  IdentitiesOnly yes
+EOF
+fi
+
+chmod 600 "$SSH_CONFIG"
+
+echo
+echo "✅ SSH key generated and added to agent."
+echo
+echo "📋 Copy this public key to GitHub:"
+echo "--------------------------------"
+cat "$KEY_PATH.pub"
+echo "--------------------------------"
+echo
+echo "Then test with:"
+echo "  ssh -T git@github.com"
+

@@ -1,0 +1,2 @@
+# source -> dest
+sudo rsync -avh --delete ~/Desktop/commands/ /usr/local/bin/

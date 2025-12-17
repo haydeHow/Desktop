@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -e
+
+echo "=== TLP Battery Charge Limit Setup ==="
+
+# Ensure running as root
+if [[ $EUID -ne 0 ]]; then
+  echo "Please run as root: sudo ./setup-tlp-battery-limit.sh"
+  exit 1
+fi
+
+echo "Installing TLP..."
+apt update
+apt install -y tlp tlp-rdw
+
+echo "Enabling and starting TLP service..."
+systemctl enable tlp
+systemctl start tlp
+
+TLP_CONF="/etc/tlp.conf"
+
+echo "Configuring battery charge thresholds..."
+
+# Backup config once
+if [[ ! -f "${TLP_CONF}.bak" ]]; then
+  cp "$TLP_CONF" "${TLP_CONF}.bak"
+  echo "Backup created at ${TLP_CONF}.bak"
+fi
+
+# Helper function to set or replace config values
+set_conf() {
+  local key="$1"
+  local value="$2"
+
+  if grep -q "^#\?$key=" "$TLP_CONF"; then
+    sed -i "s/^#\?$key=.*/$key=$value/" "$TLP_CONF"
+  else
+    echo "$key=$value" >> "$TLP_CONF"
+  fi
+}
+
+# Set charge limits
+set_conf "START_CHARGE_THRESH_BAT0" "80"
+set_conf "STOP_CHARGE_THRESH_BAT0"  "85"
+
+echo "Applying TLP configuration..."
+tlp start
+
+echo
+echo "=== Battery Status ==="
+tlp-stat -b || true
+
+echo
+echo "Setup complete."
+echo "NOTE:"
+echo "- If 'charge thresholds not supported' appears above,"
+echo "  your hardware or BIOS does not allow software limits."
+echo "- Check BIOS/UEFI for 'Battery Conservation' options."
+

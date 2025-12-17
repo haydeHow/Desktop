@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cat << 'EOF' > ~/.vimrc
+set noswapfile
+inoremap jf <esc>
+syntax on
+EOF

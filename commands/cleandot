@@ -1,0 +1,44 @@
+#!/bin/bash
+
+echo "=== Ubuntu Safe Dotfile Cleanup ==="
+
+# Directories that ARE safe to delete/clean
+SAFE_TO_DELETE=(
+    ".cache"
+    ".local/share/Trash/files"
+    ".local/share/Trash/info"
+    ".thumbnails"
+    ".nv"
+    ".wget-hsts"
+)
+
+# Files that are safe to delete
+SAFE_FILES=(
+    ".lesshst"
+    ".python_history"
+    ".bash_history"     # optional—comment this out if you want to keep history
+)
+
+echo "Cleaning safe directories..."
+for dir in "${SAFE_TO_DELETE[@]}"; do
+    if [ -d "$HOME/$dir" ]; then
+        echo "Deleting: $HOME/$dir"
+        rm -rf "$HOME/$dir"
+    fi
+done
+
+echo "Cleaning safe files..."
+for file in "${SAFE_FILES[@]}"; do
+    if [ -f "$HOME/$file" ]; then
+        echo "Deleting: $HOME/$file"
+        rm -f "$HOME/$file"
+    fi
+done
+
+echo "Recreating important directories..."
+mkdir -p "$HOME/.cache"
+mkdir -p "$HOME/.local/share/Trash/files"
+mkdir -p "$HOME/.local/share/Trash/info"
+
+echo "Done!"
+
