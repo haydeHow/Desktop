@@ -1,4 +1,4 @@
 cd ~/Desktop/
 git add -A
-git commit -m "Desktop sync - $(date '+%Y-%m-%d %H:%M') - $(hostname)"
+git commit -m "$(date '+%Y-%m-%d %H:%M') - $(hostname)"
 git push
