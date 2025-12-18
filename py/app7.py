@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, Response
 import time
 import requests
+import webbrowser
 from datetime import date, datetime, timedelta
+from threading import Timer
 import yfinance as yf
 
 app = Flask(__name__)
@@ -628,7 +630,7 @@ async function loadStocks() {
       </strong>
     `;
   } else {
-    profitEl.textContent = "No positions.";
+    profitEl.textContent = "Enter shares and date purchased.";
   }
 }
 
@@ -652,6 +654,9 @@ document.getElementById("loadBtn").onclick = loadStocks;
 """
     return Response(html, mimetype="text/html")
 
+def open_browser():
+    webbrowser.open("http://127.0.0.1:5000")
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    Timer(1, open_browser).start()
+    app.run(host="127.0.0.1", port=5000)
