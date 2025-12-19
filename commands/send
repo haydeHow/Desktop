@@ -1,5 +1,4 @@
-cd ~/Desktop/
+cd ~/Desktop
 git add -A
 git commit -m "$(date '+%Y-%m-%d %H:%M') - $(hostname)"
-git push --force --all origin
-git push --force --tags origin
+git push origin main --force
