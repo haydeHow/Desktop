@@ -1,0 +1,14 @@
+{
+    "vim.insertModeKeyBindings": [
+        {
+            "before": [
+                "j",
+                "f"
+            ],
+            "after": [
+                "<Esc>"
+            ]
+        }
+    ],
+    "editor.formatOnSave": true
+}
