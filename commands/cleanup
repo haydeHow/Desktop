@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -e
+
+echo "=============================="
+echo " Ubuntu System Cleanup Script "
+echo "=============================="
+
+# Must be run as root
+if [[ $EUID -ne 0 ]]; then
+  echo "Please run as root: sudo ./clean-ubuntu.sh"
+  exit 1
+fi
+
+echo "→ Updating package lists"
+apt update
+
+echo "→ Removing unused packages"
+apt autoremove -y
+apt autoclean -y
+apt clean
+
+echo "→ Cleaning old kernel packages"
+current_kernel=$(uname -r)
+dpkg --list 'linux-image*' | awk '{print $2}' | grep -v "$current_kernel" | xargs -r apt purge -y
+
+echo "→ Vacuuming systemd logs (keep 7 days)"
+journalctl --vacuum-time=7d
+
+echo "→ Cleaning user cache directories"
+find /home -type d -name ".cache" -exec rm -rf {}/* +
+
+echo "→ Cleaning thumbnail cache"
+rm -rf /home/*/.cache/thumbnails/*
+
+echo "→ Cleaning temporary files"
+rm -rf /tmp/*
+rm -rf /var/tmp/*
+
+echo "→ Removing crashed reports"
+rm -rf /var/crash/*
+
+echo "=============================="
+echo " Cleanup completed successfully"
+echo "=============================="
