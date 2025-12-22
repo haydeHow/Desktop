@@ -1,0 +1,10 @@
+//  ~/.config/VSCodium/User/settings.json
+{
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "f"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "editor.formatOnSave": true
+}
