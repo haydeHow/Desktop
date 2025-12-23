@@ -1,8 +1,0 @@
-
-[
-    {
-        "key": "tab",
-        "command": "selectNextSuggestion",
-        "when": "suggestWidgetVisible"
-    }
-]
